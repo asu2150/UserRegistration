@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="RegistrationProxyEndpoint">
+    <Description>Registration</Description>
+	<FaultRules>
+			<FaultRule name="SecurityFaultHandling">
+   			 <Step>
+     		   <Name>SecurityFaultCallout</Name>
+    		 </Step>
+   			 <Condition>((oauthV2.VerifyAccessToken.failed equals true) or ((oauthV2.VerifyAPIKey.failed equals true) or (BasicAuthentication.DecodeBasicAuthentication.failed equals true) or (oauthV2.failed equals true)))</Condition>
+			</FaultRule>
+			<FaultRule name="TrafficManagementFaultHandling">
+            	<Step>
+                	<Name>TrafficManagementFault</Name>
+            	</Step>
+            	<Condition>((ratelimit.SpikeArrest.failed equals true) or ((ratelimit.QuotaAtProductLevel.failed equals true)))</Condition>
+        	</FaultRule>
+	</FaultRules>
+	<DefaultFaultRule name="All">
+		<AlwaysEnforce>true</AlwaysEnforce>
+  		<Step>
+    		<Name>DefaultFaultCallout</Name>
+  		</Step>
+      <Step>
+          <Name>cf_log</Name>
+      </Step>
+	</DefaultFaultRule>
+	<PreFlow name="PreFlow">
+		<Request>
+    	<Step>
+  			<Name>cf_ProxyLogAggregator</Name>
+		</Step>
+        	<Step>
+                <Condition>request.verb != "OPTIONS"</Condition>
+                <Name>SpikeArrestCallout</Name>
+            </Step>
+       		<Step>
+  				<Condition>request.verb != "OPTIONS"</Condition>
+  				<Name>VerifyAccessToken</Name>
+			</Step>
+		</Request>
+		<Response>
+		</Response>
+    </PreFlow>
+    
+    <Flows>
+      	<Step>
+  			<Name>AccessControl</Name>
+		</Step>
+        <Flow name="UserRegistration">
+          <Request>
+            <Step>
+ 				 <Name>UserRegistration_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/v1/users&quot;) and (request.verb = &quot;POST&quot;)</Condition>
+        </Flow>
+        <Flow name="GetUserdetails">
+          <Request>
+            <Step>
+ 				 <Name>GetUserdetails_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/v1/users&quot;) and (request.verb = &quot;GET&quot;)</Condition>
+        </Flow>
+        <Flow name="Userlogin">
+          <Request>
+            <Step>
+ 				 <Name>Userlogin_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/v1/users/login&quot;) and (request.verb = &quot;POST&quot;)</Condition>
+        </Flow>
+		<Flow name="unknown-resource">
+    		<Request>
+       			<Step>
+            		<Name>Unknown_Resource</Name>
+        		</Step>
+    		</Request>
+   			<Response/>
+		</Flow>
+	</Flows>
+	
+  <PostFlow name="PostFlow">
+		<Request>
+		</Request>
+		<Response>
+  			<Step>
+  				<Name>cf_log</Name>
+			</Step>
+		</Response>
+  </PostFlow>
+  <PostClientFlow>
+		<Response>
+   			<Step>
+    			<Name>cf_sys_log</Name>
+    		</Step>
+  		</Response>
+  </PostClientFlow>
+    <HTTPProxyConnection>
+        <BasePath>/v1/users</BasePath>
+		<VirtualHost>secure</VirtualHost>
+		<VirtualHost>default</VirtualHost>
+    </HTTPProxyConnection>
+ 		<RouteRule name="Registration">
+  		 <Condition>(target.route.service = &quot;Registration&quot;)</Condition>
+  		 <TargetEndpoint>Registration</TargetEndpoint>
+ 		</RouteRule>
+</ProxyEndpoint>
