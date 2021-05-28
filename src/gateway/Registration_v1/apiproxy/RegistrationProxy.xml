@@ -23,6 +23,7 @@
 		<TargetEndpoint>Registration</TargetEndpoint>
 		<TargetEndpoint>Registration</TargetEndpoint>
 		<TargetEndpoint>Registration</TargetEndpoint>
+		<TargetEndpoint>Registration</TargetEndpoint>
     </TargetEndpoints>
 	<validate>false</validate>
 </APIProxy>
