@@ -8,7 +8,7 @@
     <!-- Target  Action name -->
     <AssignVariable>
         <Name>target.route.operation</Name>
-        <Value>GetUserdetails</Value>
+        <Value>Userlogin</Value>
     </AssignVariable>
     <!-- Proxy Log Aggregator -->
     <AssignVariable>

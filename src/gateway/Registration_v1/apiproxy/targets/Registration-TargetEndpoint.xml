@@ -7,9 +7,6 @@
 	</DefaultFaultRule>
     <PreFlow name="PreFlow">
 		<Request>
-      		<Step>
-  				<Name>cf_targetReq_LogVariableAggregator_preflow</Name>
-			</Step>
 		</Request>
 		<Response>
 		</Response>
@@ -39,14 +36,8 @@
 	</Flows>
     <PostFlow name="PostFlow">
 		<Request>
-       		<Step>
-      			<Name>cf_targetVariableAggregator</Name>
-			</Step>
 		</Request>
 		<Response>
-       		<Step>
-      			<Name>cf_targetResponseVariableAggregator</Name>
-			</Step>
 		</Response>
     </PostFlow>
     <HTTPTargetConnection>

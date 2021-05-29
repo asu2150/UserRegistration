@@ -2,12 +2,6 @@
 <ProxyEndpoint name="RegistrationProxyEndpoint">
     <Description>Registration</Description>
 	<FaultRules>
-			<FaultRule name="SecurityFaultHandling">
-   			 <Step>
-     		   <Name>SecurityFaultCallout</Name>
-    		 </Step>
-   			 <Condition>((oauthV2.VerifyAccessToken.failed equals true) or ((oauthV2.VerifyAPIKey.failed equals true) or (BasicAuthentication.DecodeBasicAuthentication.failed equals true) or (oauthV2.failed equals true)))</Condition>
-			</FaultRule>
 			<FaultRule name="TrafficManagementFaultHandling">
             	<Step>
                 	<Name>TrafficManagementFault</Name>
@@ -20,23 +14,13 @@
   		<Step>
     		<Name>DefaultFaultCallout</Name>
   		</Step>
-      <Step>
-          <Name>cf_log</Name>
-      </Step>
 	</DefaultFaultRule>
 	<PreFlow name="PreFlow">
 		<Request>
-    	<Step>
-  			<Name>cf_ProxyLogAggregator</Name>
-		</Step>
         	<Step>
                 <Condition>request.verb != "OPTIONS"</Condition>
                 <Name>SpikeArrestCallout</Name>
             </Step>
-       		<Step>
-  				<Condition>request.verb != "OPTIONS"</Condition>
-  				<Name>VerifyAccessToken</Name>
-			</Step>
 		</Request>
 		<Response>
 		</Response>
@@ -90,17 +74,9 @@
 		<Request>
 		</Request>
 		<Response>
-  			<Step>
-  				<Name>cf_log</Name>
-			</Step>
 		</Response>
   </PostFlow>
   <PostClientFlow>
-		<Response>
-   			<Step>
-    			<Name>cf_sys_log</Name>
-    		</Step>
-  		</Response>
   </PostClientFlow>
     <HTTPProxyConnection>
         <BasePath>/v1/users</BasePath>
