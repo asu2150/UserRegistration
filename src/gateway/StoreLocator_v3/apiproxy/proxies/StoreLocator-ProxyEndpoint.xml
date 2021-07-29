@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="StoreLocatorProxyEndpoint">
+    <Description>StoreLocator</Description>
+	<FaultRules>
+			<FaultRule name="TrafficManagementFaultHandling">
+            	<Step>
+                	<Name>TrafficManagementFault</Name>
+            	</Step>
+            	<Condition>((ratelimit.SpikeArrest.failed equals true) or ((ratelimit.QuotaAtProductLevel.failed equals true)))</Condition>
+        	</FaultRule>
+	</FaultRules>
+	<DefaultFaultRule name="All">
+		<AlwaysEnforce>true</AlwaysEnforce>
+  		<Step>
+    		<Name>DefaultFaultCallout</Name>
+  		</Step>
+	</DefaultFaultRule>
+	<PreFlow name="PreFlow">
+		<Request>
+        	<Step>
+                <Condition>request.verb != "OPTIONS"</Condition>
+                <Name>SpikeArrestCallout</Name>
+            </Step>
+		</Request>
+		<Response>
+		</Response>
+    </PreFlow>
+    
+    <Flows>
+      	<Step>
+  			<Name>AccessControl</Name>
+		</Step>
+        <Flow name="SearchStoresOnGeoLocation">
+          <Request>
+            <Step>
+ 				 <Name>SearchStoresOnGeoLocation_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/&quot;) and (request.verb = &quot;GET&quot;)</Condition>
+        </Flow>
+        <Flow name="getStoreList">
+          <Request>
+            <Step>
+ 				 <Name>getStoreList_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/list&quot;) and (request.verb = &quot;GET&quot;)</Condition>
+        </Flow>
+        <Flow name="SearchStoresOnAddress">
+          <Request>
+            <Step>
+ 				 <Name>SearchStoresOnAddress_AssignRoutingVariable</Name>
+			</Step>
+          </Request>
+		  <Response>
+		  </Response>
+		  <Condition>(proxy.pathsuffix MatchesPath &quot;/search&quot;) and (request.verb = &quot;GET&quot;)</Condition>
+        </Flow>
+		<Flow name="unknown-resource">
+    		<Request>
+       			<Step>
+            		<Name>Unknown_Resource</Name>
+        		</Step>
+    		</Request>
+   			<Response/>
+		</Flow>
+	</Flows>
+	
+  <PostFlow name="PostFlow">
+		<Request>
+		</Request>
+		<Response>
+		</Response>
+  </PostFlow>
+  <PostClientFlow>
+  </PostClientFlow>
+    <HTTPProxyConnection>
+        <BasePath>/selfservice/v1/stores</BasePath>
+		<VirtualHost>secure</VirtualHost>
+		<VirtualHost>default</VirtualHost>
+    </HTTPProxyConnection>
+ 		<RouteRule name="StoreLocator">
+  		 <Condition>(target.route.service = &quot;StoreLocator&quot;)</Condition>
+  		 <TargetEndpoint>StoreLocator</TargetEndpoint>
+ 		</RouteRule>
+</ProxyEndpoint>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="StoreLocatorProxy">
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <Description>StoreLocator</Description>
+    <Policies>
+    <!-- Values will be populated by deployment script -->
+    </Policies>	
+    <ProxyEndpoints>
+        <ProxyEndpoint>StoreLocatorProxyEndpoint</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources>
+    	<!-- Values will be populated by deployment script -->
+	</Resources>
+    <TargetServers/>
+    <TargetEndpoints>
+    	<!-- Values will be populated by deployment script -->
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>Payment Initiation</TargetEndpoint>
+		<TargetEndpoint>StoreLocator</TargetEndpoint>
+    </TargetEndpoints>
+	<validate>false</validate>
+</APIProxy>
